@@ -19,4 +19,8 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('base/', include('applications.core.urls')),
+    
+    # Third party
+    path('accounts/', include('allauth.urls')),
+    path('tinymce/', include('tinymce.urls')),
 ]
