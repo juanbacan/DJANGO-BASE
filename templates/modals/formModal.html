@@ -1,0 +1,138 @@
+
+{% block extrajs %}{% endblock extrajs %}
+<div class="modal-dialog modal-lg">
+    <div class="modal-content">
+        <div class="modal-header">
+            {% if title %}
+                <h4 class="modal-title">{{ title }}</h4>
+            {% else %}
+                <h4 class="modal-title">{% block title %}{% endblock title %}</h4>
+            {% endif %}
+            <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close">
+            </button>
+        </div>
+        {% if url %}
+            <form id="modalForm1" class="form" action="{{ url }}" method="post" enctype="multipart/form-data">
+        {% else %}
+            <form id="modalForm1" class="form" action="{% block url %}{% endblock url %}" method="post" enctype="multipart/form-data">
+        {% endif %}
+        
+            {% csrf_token %}
+
+            <input type="hidden" name="redirect" value={% block formdestination %}{% endblock %}>
+
+            <div class="modal-body">
+                {% block formextra %}{% endblock formextra %}
+
+                {% if message %}
+                    {{ message }}
+                {% else %}
+                    {% block message %}{% endblock message %}
+                {% endif %}
+
+
+                {% if form %}
+                    <div class="row">
+                        {% for field in form %}
+                            {% if field.field.widget.attrs.separator %}
+                                <div class="col-12 mb-3">
+                                    <div class="alert alert-primary" role="alert" style="font-size:0.9rem; padding: 5px 20px; margin-bottom: 4px">
+                                        {{ field.field.widget.attrs.separator }}
+                                    </div>
+                                </div>
+                            {% endif %}
+
+                            {% if field.field.widget.attrs.labelwidth %}
+                                <div class="mb-3 col-md-{{field.field.widget.attrs.labelwidth}}" style="display:flex" id="fieldset_{{ field.name }}">
+                            {% else %}
+                                <div class="mb-3 col-md-12" style="display:flex" id="fieldset_{{ field.name }}">
+                            {% endif %}
+                                    <div class="label-container-form">
+                                        <label class="form-label form-label-text">{{ field.label }}</label>
+                                    </div>
+                                    <div class="w-100">
+                                        {{ field }}
+                                        {% if field.field.widget.attrs.validate %}
+                                            <div class="invalid-feedback">
+                                                {{ field.field.widget.attrs.validate }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+
+                                    {% comment %} <div class="valid-feedback">Looks good!</div> {% endcomment %}
+                                </div> 
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                {% block formsuffix %}{% endblock formsuffix %}
+
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" type="button" data-bs-dismiss="modal">Cancelar</button>
+                <button 
+                    class="btn btn-primary" 
+                    type="button" 
+                    onClick="{% if not custom_submit_form %}submitModalForm1(){% else %}customSubmitForm(){% endif %}"
+                >
+                    Confirmar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .modal-body p {
+        display: flex;
+    }
+    
+    .label-container-form {
+        width: 112px;
+        margin-right: 8px;
+    }
+    
+    .modal-body input {
+        height: 32px;
+        font-size: 0.9rem;
+    }
+    .modal-body select {
+        height: 32px;
+        font-size: 0.9rem;
+    }
+    
+    .form-check-input{
+        height: 1.5em!important;
+    }
+    
+    input {
+        padding: 0.375rem 0.75rem;
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 0.5;
+        color: #212529;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid #ced4da;
+        appearance: none;
+        border-radius: 0.375rem;
+        transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+    }
+    
+    input:focus {
+        color: #212529;
+        background-color: #fff;
+        border-color: #86b7fe;
+        outline: 0;
+        box-shadow: 0 0 0 0.25rem rgb(13 110 253 / 25%);
+    }
+    
+    label {
+        width: 112px;
+        display: inline-block;
+        text-align: right;
+        margin-right: 40px;
+        font-size: 0.8em;
+        line-height: 1;
+    } 
+</style>
+

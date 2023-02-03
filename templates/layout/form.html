@@ -1,0 +1,158 @@
+
+
+<div>
+    {% block formextra %}{% endblock formextra %}
+
+    {% if message %}
+        {{ message }}
+    {% else %}
+        {% block message %}{% endblock message %}
+    {% endif %}
+
+    {{ form.media }}
+
+    {% if form %}
+        <div class="row">
+            {% for field in form %}
+                {% if field.field.widget.attrs.separator %}
+                    <div class="col-12 mb-3">
+                        <div class="alert alert-primary" role="alert" style="font-size:0.9rem; padding: 5px 20px; margin-bottom: 4px">
+                            {{ field.field.widget.attrs.separator }}
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if field.field.widget.attrs.labelwidth %}
+                    <div class="mb-3 col-md-{{field.field.widget.attrs.labelwidth}}" style="display:flex" id="fieldset_{{ field.name }}">
+                {% else %}
+                    <div class="mb-3 col-md-12" style="display:flex" id="fieldset_{{ field.name }}">
+                {% endif %}
+                        <div class="label-container-form">
+                            <label class="form-label form-label-text">{{ field.label }}</label>
+                        </div>
+                        <div class="w-100">
+                            {{ field }}
+                            {% if field.field.widget.attrs.validate %}
+                                <div class="invalid-feedback">
+                                    {{ field.field.widget.attrs.validate }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="valid-feedback">Looks good!</div>
+                    </div> 
+            {% endfor %}
+        </div>
+    {% endif %}
+    
+    {% block formsuffix %}{% endblock formsuffix %}
+
+    {% if formset %}
+        {{ formset.management_form }}
+
+        <h2>{{ formset.prefix }}</h2>
+
+        <script type="text/html" id="formset-template">
+            <tr id="{{ formset.prefix }}-__prefix__">
+                {% for fields in formset.empty_form.hidden_fields %}
+                    {{ fields }}
+                {% endfor %}
+                {% for fields in formset.empty_form.visible_fields %}
+                    <td>{{fields}}</td>
+                {% endfor %}
+                <td><a href="#" class="delete-row">
+                    <svg width="18px" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="CancelIcon" tabindex="-1" title="Cancel"><path fill="#666" d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"></path></svg>
+                </a></td>
+            </tr>
+        </script>
+        <div class="table-responsive card-mt-4">
+            <table class="table table-bordered table-hover" id="formset-table">
+                <thead>
+                    <tr>
+                        {% for fields in formset.empty_form.visible_fields %}
+                            <th>{{fields.label}}</th>
+                        {% endfor %}
+                        <th>¿Eliminar?</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for form in formset %}
+                        {{ forms.management_form }}
+                        <tr id="{{ formset.prefix }}-{{ forloop.counter0 }}">
+                            {% for fields in form.hidden_fields %}
+                                {{ fields }}
+                            {% endfor %}
+                            {% for fields in form.visible_fields %}
+                                <td>{{fields}}</td>
+                            {% endfor %}
+                            <td><a href="#" class="delete-row">
+                                <svg width="18px" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="CancelIcon" tabindex="-1" title="Cancel"><path fill="#666" d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"></path></svg>
+                            </a></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div class="card-footer">
+                <button type="button" class="btn btn-primary btn-sm" id="add-row">
+                    <svg width="22px" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="AddIcon" tabindex="-1" title="Add"><path fill="#fff" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg>
+                    Agregar {{ formset.title }} adicional
+                </button>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<style>
+    label {
+        width: 112px;
+        display: inline-block;
+        text-align: right;
+        margin-right: 40px;
+        font-size: 0.8em;
+        line-height: 1;
+    } 
+</style>
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script>
+    $(document).ready(function() {
+        var formsetTemplate = $('#formset-template').html();
+        var formsetTable = $('#formset-table');
+        var formsetCounter = formsetTable.find('tbody tr').length;
+        var formsetAddButton = $('#add-row');
+        var formsetDeleteButton = $('.delete-row');
+
+        formsetAddButton.on('click', function(e) {
+            e.preventDefault();
+            var newRow = formsetTemplate.replace(/__prefix__/g, formsetCounter);
+            formsetTable.find('tbody').append(newRow);
+            formsetCounter++;
+            
+            const idNewEditor = '#id_respuestas-' + (formsetCounter - 1) + '-enunciado';
+
+            // Change input value
+            $("#id_respuestas-TOTAL_FORMS").val(formsetCounter);
+
+            tinymce.init({
+                selector: `${idNewEditor}`,
+                plugins: 'advlist autolink lists link image charmap print preview hr anchor pagebreak',
+                toolbar_mode: 'floating',
+            });
+            
+        });
+
+        formsetTable.on('click', '.delete-row', function(e) {
+            e.preventDefault();
+            $(this).closest('tr').remove();
+
+            // Get the number of rows
+            var rows = formsetTable.find('tbody tr').length;
+            // Change input value
+            $("#id_respuestas-TOTAL_FORMS").val(rows);
+
+        });
+        
+    });
+    
+</script>
+

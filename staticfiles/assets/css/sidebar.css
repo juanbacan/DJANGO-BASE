@@ -1,0 +1,53 @@
+
+.accordion {
+    padding-right: 0;
+    padding-left: 0;
+}
+
+.sidebar {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 999;
+    left: 0;
+    background-color: #fff;
+    overflow-x: hidden;
+    border-right: 2px solid #e6e6e6;
+}
+
+.sidebar a {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    color: rgb(31, 31, 31);
+    display: block;
+}
+
+.sidebar a:hover {
+    color: #f1f1f1;
+}
+
+.sidebar .closebtn {
+    font-size: 36px;
+}        
+.openbtn {
+    font-size: 20px;
+    cursor: pointer;
+    color: #000;
+    padding: 0px 8px;
+    border: none;
+}
+
+.openbtn:hover {
+}
+
+#main {
+
+}
+
+@media screen and (max-height: 450px) {
+    .sidebar {padding-top: 15px;}
+    .sidebar a {font-size: 18px;}
+}
+.content {
+    margin-top: 55px;
+}

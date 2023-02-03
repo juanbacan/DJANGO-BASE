@@ -1,0 +1,27 @@
+{% extends 'layout/base.html' %}
+
+{% block content %}
+
+    <div class="py-3" style="background-color: #E9ECF8">
+        <div class="container-lg">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="row">
+                        {% if not notmain %}
+                            <div class="card shadow-sm mb-4">
+                                <div class="card-body">
+                                    {% block main %}{% endblock main %}
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% block extramain %}{% endblock %}
+                    </div>
+                </div>
+                <div class="col-md-4 px-2">
+                    {% block sidebar %}{% endblock sidebar %}
+                </div>
+                {% block mainout %}{% endblock mainout %}
+            </div>
+        </div>
+    </div>
+{% endblock content %}
